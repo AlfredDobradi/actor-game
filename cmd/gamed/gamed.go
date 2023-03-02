@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/signal"
 	"strings"
+	"time"
 
 	"github.com/alfreddobradi/actor-game/actor/hello"
 	"github.com/alfreddobradi/actor-game/actor/inventory"
@@ -41,7 +42,8 @@ func main() {
 	system := actor.NewActorSystem()
 
 	provider, _ := etcd.NewWithConfig("/actor-game", clientv3.Config{
-		Endpoints: endpoints,
+		Endpoints:   endpoints,
+		DialTimeout: time.Second * 5,
 	})
 	lookup := disthash.New()
 	config := remote.Configure("localhost", 0)
