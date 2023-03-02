@@ -25,6 +25,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/google/uuid"
 	clientv3 "go.etcd.io/etcd/client/v3"
+	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -48,7 +49,8 @@ func main() {
 
 	provider, err := etcd.NewWithConfig("/actor-game", clientv3.Config{
 		Endpoints:   endpoints,
-		DialTimeout: time.Second * 5,
+		DialTimeout: 5 * time.Second,
+		DialOptions: []grpc.DialOption{grpc.WithBlock()},
 	})
 	if err != nil {
 		log.Fatalf("error creating etcd provider: %v", err)
@@ -185,8 +187,9 @@ func main() {
 		w.Write([]byte("OK"))
 	})
 
+	listenAddress := fmt.Sprintf("0.0.0.0:%s", listeningPort)
 	s := &http.Server{
-		Addr:    fmt.Sprintf("0.0.0.0:%s", listeningPort),
+		Addr:    listenAddress,
 		Handler: r,
 	}
 
@@ -196,6 +199,7 @@ func main() {
 		}
 	}()
 
+	log.Printf("Listening on %s", listenAddress)
 	defer s.Shutdown(context.Background()) // nolint
 
 	<-sigchan
