@@ -34,5 +34,5 @@ jobs:
           platforms: linux/amd64,linux/arm64
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/actor-game:latest,${{ secrets.DOCKERHUB_USERNAME }}/actor-game:{{ github.event.release.tag_name }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/actor-game:latest,${{ secrets.DOCKERHUB_USERNAME }}/actor-game:${{ github.event.release.tag_name }}
 
