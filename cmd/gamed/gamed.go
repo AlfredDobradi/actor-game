@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -33,18 +34,25 @@ func main() {
 	if etcdEndpoints == "" {
 		log.Fatalln("Please set GAMED_ETCD_ENDPOINTS env var")
 	}
+	listeningPort := os.Getenv("GAMED_LISTENING_PORT")
+	if listeningPort == "" {
+		listeningPort = "80"
+	}
 
 	sigchan := make(chan os.Signal, 1)
-	signal.Notify(sigchan, os.Interrupt, os.Kill)
+	signal.Notify(sigchan, os.Interrupt)
 
 	endpoints := strings.Split(etcdEndpoints, ",")
 
 	system := actor.NewActorSystem()
 
-	provider, _ := etcd.NewWithConfig("/actor-game", clientv3.Config{
+	provider, err := etcd.NewWithConfig("/actor-game", clientv3.Config{
 		Endpoints:   endpoints,
 		DialTimeout: time.Second * 5,
 	})
+	if err != nil {
+		log.Fatalf("error creating etcd provider: %v", err)
+	}
 	lookup := disthash.New()
 	config := remote.Configure("localhost", 0)
 
@@ -178,7 +186,7 @@ func main() {
 	})
 
 	s := &http.Server{
-		Addr:    "0.0.0.0:8080",
+		Addr:    fmt.Sprintf("0.0.0.0:%s", listeningPort),
 		Handler: r,
 	}
 
