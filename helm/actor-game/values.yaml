@@ -41,7 +41,7 @@ service:
   port: 80
 
 ingress:
-  enabled: false
+  enabled: true
   className: "nginx"
   annotations:
     "cert-manager.io/cluster-issuer": cluster-letsencrypt-prod
@@ -55,7 +55,7 @@ ingress:
   tls:
     - secretName: dev-actor-game-tls
       hosts:
-        dev.actor-game.0xa1.0x42.in
+        - dev.actor-game.0xa1.0x42.in
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
@@ -87,4 +87,16 @@ affinity: {}
 
 podEnv:
   - name: GAMED_ETCD_ENDPOINTS
-    value: "etcd:2379"
+    value: "actor-game-etcd:2379"
+  - name: GAMED_LISTENING_PORT
+    value: "80"
+
+etcd:
+  service:
+    annotations: {}
+      # linkerd.io/inject: enabled
+  persistence:
+    storageClass: "longhorn-test"
+  auth:
+    rbac:
+      create: false
