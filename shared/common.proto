@@ -12,17 +12,6 @@ enum Status {
 
 message Noop {}
 
-message HelloRequest {
-    google.protobuf.Timestamp Timestamp = 1;
-    google.protobuf.Struct Context = 2;
-}
-
-message HelloResponse {
-    google.protobuf.Timestamp Timestamp = 1;
-    Status Status = 2;
-    google.protobuf.Struct Context = 3;
-}
-
 message DescribeInventoryRequest {
     google.protobuf.Timestamp Timestamp = 1;
     google.protobuf.Struct Context = 2;
@@ -59,10 +48,6 @@ message BuildResponse {
     google.protobuf.Timestamp Timestamp = 1;
     Status Status = 2;
     google.protobuf.Struct Context = 3;
-}
-
-service Hello {
-    rpc SayHello(HelloRequest) returns (HelloResponse) {}
 }
 
 service Scheduler {
