@@ -171,6 +171,10 @@ func main() {
 		}
 	})
 
+	r.Get("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("OK"))
+	})
+
 	s := &http.Server{
 		Addr:    "0.0.0.0:8080",
 		Handler: r,
