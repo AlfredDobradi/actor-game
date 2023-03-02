@@ -1,0 +1,79 @@
+syntax = "proto3";
+package shared;
+option go_package = "github.com/alfreddobradi/actor-game/shared";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+enum Status {
+    Unknown = 0;
+    OK = 1;
+    Error = 2;
+}
+
+message Noop {}
+
+message HelloRequest {
+    google.protobuf.Timestamp Timestamp = 1;
+    google.protobuf.Struct Context = 2;
+}
+
+message HelloResponse {
+    google.protobuf.Timestamp Timestamp = 1;
+    Status Status = 2;
+    google.protobuf.Struct Context = 3;
+}
+
+message DescribeInventoryRequest {
+    google.protobuf.Timestamp Timestamp = 1;
+    google.protobuf.Struct Context = 2;
+}
+
+message DescribeInventoryResponse {
+    google.protobuf.Timestamp Timestamp = 1;
+    Status Status = 2;
+    google.protobuf.Struct Context = 3;
+}
+
+message ScheduleRequest {
+    google.protobuf.Timestamp Timestamp = 1;
+    google.protobuf.Struct Context = 2;
+}
+
+message ScheduleResponse {
+    google.protobuf.Timestamp Timestamp = 1;
+    Status Status = 2;
+    google.protobuf.Struct Context = 3;
+}
+
+message StartTimerRequest {
+    google.protobuf.Timestamp Timestamp = 1;
+    google.protobuf.Struct Context = 2;
+}
+
+message BuildRequest {
+    google.protobuf.Timestamp Timestamp = 1;
+    google.protobuf.Struct Context = 2;
+}
+
+message BuildResponse {
+    google.protobuf.Timestamp Timestamp = 1;
+    Status Status = 2;
+    google.protobuf.Struct Context = 3;
+}
+
+service Hello {
+    rpc SayHello(HelloRequest) returns (HelloResponse) {}
+}
+
+service Scheduler {
+    rpc Schedule (ScheduleRequest) returns (ScheduleResponse) {}
+}
+
+service Inventory {
+    rpc Describe (DescribeInventoryRequest) returns (DescribeInventoryResponse) {}
+    rpc StartBuild (BuildRequest) returns (BuildResponse) {}
+}
+
+service Timer {
+    rpc Start (StartTimerRequest) returns (Noop) {}
+}

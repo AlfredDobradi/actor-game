@@ -1,0 +1,15 @@
+syntax = "proto3";
+package inventory;
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+message BuildRequest {
+    google.protobuf.Timestamp Timestamp = 1;
+    google.protobuf.Struct Context = 2;
+}
+
+message BuildResponse {
+    google.protobuf.Timestamp Timestamp = 1;
+    int32 Status = 2;
+    google.protobuf.Struct Context = 3;
+}
