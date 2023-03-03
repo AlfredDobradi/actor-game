@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/alfreddobradi/actor-game/actor/inventory"
+	"github.com/alfreddobradi/actor-game/actor/scheduler"
 	"github.com/alfreddobradi/actor-game/api"
 	"github.com/alfreddobradi/actor-game/registry"
 	"github.com/alfreddobradi/actor-game/shared"
@@ -57,11 +58,21 @@ func main() {
 	lookup := disthash.New()
 	config := remote.Configure("localhost", 0)
 
+	schedulerKind := shared.NewSchedulerKind(func() shared.Scheduler {
+		return &scheduler.SchedulerGrain{}
+	}, 0)
+
 	inventoryKind := shared.NewInventoryKind(func() shared.Inventory {
 		return &inventory.InventoryGrain{}
 	}, 0)
 
-	clusterConfig := cluster.Configure("game-cluster", provider, lookup, config, cluster.WithKinds(inventoryKind))
+	clusterConfig := cluster.Configure(
+		"game-cluster",
+		provider,
+		lookup,
+		config,
+		cluster.WithKinds(inventoryKind, schedulerKind),
+	)
 	c := cluster.New(system, clusterConfig)
 	c.StartMember()
 	defer c.Shutdown(true)

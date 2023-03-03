@@ -25,7 +25,9 @@ message DescribeInventoryResponse {
 
 message ScheduleRequest {
     google.protobuf.Timestamp Timestamp = 1;
-    google.protobuf.Struct Context = 2;
+    string Reply = 2;
+    string Duration = 3;
+    google.protobuf.Struct Context = 4;
 }
 
 message ScheduleResponse {

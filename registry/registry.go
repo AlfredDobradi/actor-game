@@ -41,7 +41,7 @@ func loadBlueprints() {
 					Cost: map[string]int64{
 						shared.ResourceWood: 30,
 					},
-					Time: "1h",
+					Time: "10s",
 				},
 			},
 		}

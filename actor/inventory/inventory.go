@@ -137,7 +137,45 @@ func (g *InventoryGrain) StartBuild(req *shared.BuildRequest, ctx cluster.GrainC
 		}, nil
 	}
 
-	// TODO handle the build time
+	client := shared.GetSchedulerGrainClient(ctx.Cluster(), shared.GenerateSchedulerGrainID().String())
+	res, err := client.Schedule(&shared.ScheduleRequest{
+		Timestamp: timestamppb.Now(),
+		Reply:     "this-is-a-test",
+		Duration:  blueprint.Time,
+		Context: &structpb.Struct{
+			Fields: map[string]*structpb.Value{
+				"building": structpb.NewStringValue(blueprintName),
+			},
+		},
+	})
+	if err != nil {
+		return &shared.BuildResponse{
+			Timestamp: timestamppb.Now(),
+			Status:    shared.Status_Error,
+			Context: &structpb.Struct{
+				Fields: map[string]*structpb.Value{
+					shared.KeyError: structpb.NewStringValue(err.Error()),
+				},
+			},
+		}, nil
+	}
+
+	if res.Status != shared.Status_OK {
+		fields := make(map[string]*structpb.Value)
+		if err, ok := res.Context.Fields[shared.KeyError]; ok {
+			fields[shared.KeyError] = err
+		}
+
+		return &shared.BuildResponse{
+			Timestamp: timestamppb.Now(),
+			Status:    res.Status,
+			Context: &structpb.Struct{
+				Fields: fields,
+			},
+		}, nil
+	}
+
+	// move build from here to accepting the reply asynchronously
 
 	g.buildings.Build(blueprint)
 
